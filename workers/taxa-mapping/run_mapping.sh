@@ -67,14 +67,16 @@ WORKERS_DIR="/data/minebugs/shared/workers/taxa-mapping"
 [[ -d "$WORKERS_DIR" ]] || { echo "[FATAL] Worker sources not found: ${WORKERS_DIR}" >&2; exit 1; }
 export PYTHONPATH="${WORKERS_DIR}:${PYTHONPATH:-}"
 
+# Temporarily disable set -e so that a non-zero Python exit code does not
+# terminate the shell before we can capture it and update status.txt.
+set +e
 python3 "${WORKERS_DIR}/runner_slurm.py" \
     --job-id     "${JOB_UUID}" \
     --input-key  "${INPUT_KEY}" \
     --output-key "${OUTPUT_KEY}"
-
 PYTHON_EXIT=$?
+set -e
 
-# Capture exit code before set -e can intercept it, so we can write status.txt
 if [[ $PYTHON_EXIT -eq 0 ]]; then
     echo "COMPLETED" > "${JOB_DIR}/status.txt"
     echo " Job ${JOB_UUID} completed — $(date -u +%Y-%m-%dT%H:%M:%SZ)"

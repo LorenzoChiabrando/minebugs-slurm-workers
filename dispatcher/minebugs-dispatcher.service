@@ -1,0 +1,59 @@
+# /etc/systemd/system/minebugs-dispatcher.service
+#
+# systemd unit for the MINeBUGS SLURM Dispatcher.
+#
+# Installation:
+#   sudo cp minebugs-dispatcher.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now minebugs-dispatcher
+#
+# Operations:
+#   sudo systemctl status  minebugs-dispatcher
+#   sudo systemctl restart minebugs-dispatcher
+#   journalctl -u minebugs-dispatcher -f
+
+[Unit]
+Description=MINeBUGS SLURM Dispatcher
+Documentation=https://github.com/mandringo02/minebugs-slurm-workers
+# Start after the network is fully up. The dispatcher itself handles
+# RabbitMQ unavailability with an internal retry loop, so a hard
+# dependency on Docker or RabbitMQ is intentionally avoided.
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+
+# Run as the same OS user that owns the NFS data directory and is
+# authorised to call sbatch. Adjust to match your SLURM setup.
+User=slurm
+Group=slurm
+
+WorkingDirectory=/data/minebugs/shared/dispatcher
+
+# Environment variables are loaded from a separate file so that credentials
+# never appear in the unit file (which is world-readable by default).
+# File must be owned by root:slurm, permissions 640.
+EnvironmentFile=/data/minebugs/shared/dispatcher.env
+
+# Absolute path to the venv interpreter — avoids PATH resolution issues.
+ExecStart=/data/minebugs/shared/venvs/venv_dispatcher/bin/python3 \
+    /data/minebugs/shared/dispatcher/dispatcher.py
+
+# Restart automatically on crash (non-zero exit) but not on clean shutdown
+# (exit code 0), which is how the dispatcher exits after receiving SIGTERM.
+Restart=on-failure
+RestartSec=15s
+
+# Give the process 30 seconds to finish any in-progress sbatch call before
+# systemd sends SIGKILL. A graceful stop (systemctl stop) sends SIGTERM first.
+TimeoutStopSec=30s
+
+# Redirect stdout and stderr to the system journal.
+# View logs with: journalctl -u minebugs-dispatcher [-f] [--since "1 hour ago"]
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=minebugs-dispatcher
+
+[Install]
+WantedBy=multi-user.target

@@ -54,9 +54,6 @@ if __name__ == "__main__":
     logger.info("=" * 60)
 
     try:
-        # Import here (not at module level) because service.py imports storage.py
-        # which creates storage_client at module level. The import must happen
-        # after the bash script has already run 'source secrets.env'.
         from taxa_mapping.service import run_mapping_pipeline
         run_mapping_pipeline(args.job_id, args.input_key, args.output_key)
         logger.info(f"Pipeline completed successfully — job {args.job_id}")

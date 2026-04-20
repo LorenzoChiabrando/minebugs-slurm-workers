@@ -7,7 +7,6 @@ __pycache__/
 # Virtual environments
 .venv/
 venv/
-env/
 ENV/
 
 # Distribution / packaging
@@ -31,10 +30,12 @@ cmake_install.cmake
 # Logs
 *.log
 
-# Environment / secrets
+# Environment / secrets — never commit actual credential files
 .env
 .env.*
 *.env
+# Allow committed .example templates in env/
+!env/*.example
 
 # IDE
 .idea/
