@@ -19,6 +19,7 @@ Usage (invoked from run_simulation.sh):
         --config-file "${CONFIG_FILE}"
 """
 
+import os
 import sys
 import json
 import shutil
@@ -68,7 +69,7 @@ def _download_models(model_ids: list, models_dir: Path, vmh_base_url: str) -> No
         dest = models_dir / f"{model_id}.mat"
         if dest.exists():
             continue  # concurrently downloaded by another job
-        tmp = models_dir / f".{model_id}.mat.tmp.{logger.handlers[0].stream.fileno()}"
+        tmp = models_dir / f".{model_id}.mat.tmp.{os.getpid()}"
         url = f"{vmh_base_url}{model_id}.mat"
         logger.info("  Fetching: %s", url)
         try:
