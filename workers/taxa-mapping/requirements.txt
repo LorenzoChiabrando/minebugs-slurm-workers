@@ -1,0 +1,18 @@
+# --- Infrastructure & Messaging ---
+pika==1.3.2
+requests==2.32.3
+
+# --- Data Science & Math ---
+pandas==2.2.0
+numpy==1.26.4
+
+# --- Bioinformatics & Science ---
+biopython==1.83
+joblib==1.3.2
+
+# --- Data Validation ---
+pydantic==2.6.1
+pydantic-settings==2.1.0
+
+# --- MINIO STORAGE ---
+minio==7.2.0
