@@ -369,10 +369,8 @@ def _validate_environment() -> None:
     if not SCRIPT_MAPPING.exists():
         errors.append(f"Mapping script not found: {SCRIPT_MAPPING}")
 
-    # Simulation script is optional until that worker is activated.
-    # Uncomment the check below once run_simulation.sh is deployed.
-    # if not SCRIPT_SIMULATION.exists():
-    #     errors.append(f"Simulation script not found: {SCRIPT_SIMULATION}")
+    if not SCRIPT_SIMULATION.exists():
+        errors.append(f"Simulation script not found: {SCRIPT_SIMULATION}")
 
     if errors:
         for error in errors:

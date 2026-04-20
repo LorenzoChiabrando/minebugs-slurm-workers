@@ -52,4 +52,3 @@ class MinioStorage:
             logger.critical(f"Failed to download reference data: {e}")
             raise e
 
-storage_client = MinioStorage()

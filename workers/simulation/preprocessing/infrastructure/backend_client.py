@@ -24,6 +24,10 @@ def update_simulation_status(
         error_message: Optional[str] = None
 ) -> None:
 
+    if not settings.backend_url:
+        logger.debug("BACKEND_BASE_URL not set — skipping callback for simulation %s", simulation_id)
+        return
+
     url = f"{settings.backend_url}/api/simulation/internal/{simulation_id}"
 
     headers = {
