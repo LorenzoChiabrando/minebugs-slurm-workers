@@ -260,7 +260,7 @@ def _handle_simulation(
     job_id = "UNKNOWN"
     try:
         message = json.loads(body)
-        job_id  = message["simulationId"]
+        job_id  = message["jobId"]
         user_id = message.get("userId", "unknown")
 
         logger.info("[SIMULATION] Received job %s (user: %s)", job_id, user_id)

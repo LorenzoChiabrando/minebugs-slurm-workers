@@ -144,7 +144,7 @@ def run_mapping_pipeline(job_id: str, s3_input_key: str, s3_output_key: str) -> 
 
         try:
             backend_client.update_job(job_id, {
-                "status": "ERROR",
+                "status": "FAILED",
                 "errorMessage": str(e)
             })
         except Exception as update_error:

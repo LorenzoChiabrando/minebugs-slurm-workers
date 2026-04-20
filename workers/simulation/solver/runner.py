@@ -38,7 +38,7 @@ class SolverRunner:
         logger.info(f"Running Solver: {' '.join(cmd)}")
 
         # Python-level timeout: time_limit + 5 minutes safety buffer.
-        # Prevents a hung solver binary from blocking the thread pool indefinitely.
+        # Ensures the SLURM job does not hang indefinitely if the solver stalls.
         python_timeout = int(config.get("time_limit", 3600)) + 300
 
         try:
