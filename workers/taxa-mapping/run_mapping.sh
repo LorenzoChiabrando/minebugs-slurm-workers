@@ -18,8 +18,8 @@
 #SBATCH --job-name=taxa_map
 #SBATCH --partition=mapping
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=6G
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=2000M
 #SBATCH --time=01:00:00
 #SBATCH --output=/data/minebugs/logs/map_%j.out
 #SBATCH --error=/data/minebugs/logs/map_%j.err
@@ -66,6 +66,10 @@ source "${VENV_PATH}/bin/activate"
 WORKERS_DIR="/data/minebugs/shared/workers/taxa-mapping"
 [[ -d "$WORKERS_DIR" ]] || { echo "[FATAL] Worker sources not found: ${WORKERS_DIR}" >&2; exit 1; }
 export PYTHONPATH="${WORKERS_DIR}:${PYTHONPATH:-}"
+
+# Cap joblib/loky to the CPUs allocated by SLURM.
+# Without this, n_jobs=-2 would consume all node CPUs regardless of allocation.
+export LOKY_MAX_CPU_COUNT="${SLURM_CPUS_PER_TASK}"
 
 # Temporarily disable set -e so that a non-zero Python exit code does not
 # terminate the shell before we can capture it and update status.txt.

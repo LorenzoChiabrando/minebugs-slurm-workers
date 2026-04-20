@@ -14,9 +14,9 @@
 #SBATCH --job-name=sim
 #SBATCH --partition=simulation
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=32G
-#SBATCH --time=06:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=2000M
+#SBATCH --time=08:00:00
 #SBATCH --output=/data/minebugs/logs/sim_%j.out
 #SBATCH --error=/data/minebugs/logs/sim_%j.err
 
@@ -68,6 +68,13 @@ export LD_LIBRARY_PATH="/data/minebugs/shared/solver/lib:${LD_LIBRARY_PATH:-}"
 # Allow secrets.env to override the solver binary path; otherwise use the
 # standard NFS location where build_pipeline.sh places the compiled binary.
 export SOLVER_BINARY_PATH="${SOLVER_BINARY_PATH:-/data/minebugs/shared/solver/solver_cpp}"
+
+# Cap all threading libraries to the CPUs allocated by SLURM.
+# HiGHS (OpenMP), NumPy/SciPy (OpenBLAS/MKL), and joblib all respect these.
+export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK}"
+export OPENBLAS_NUM_THREADS="${SLURM_CPUS_PER_TASK}"
+export MKL_NUM_THREADS="${SLURM_CPUS_PER_TASK}"
+export LOKY_MAX_CPU_COUNT="${SLURM_CPUS_PER_TASK}"
 
 # Temporarily disable set -e so that a non-zero Python exit code does not
 # terminate the shell before we can capture it and update status.txt.
